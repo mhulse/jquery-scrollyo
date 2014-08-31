@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+
+<head>
+	
+	<meta charset="utf-8">
+	
+	<title>jQuery scroll, yo!</title>
+	<meta name="description" content="Remind users to scroll when there’s overflow.">
+	<meta name="keywords" content="">
+	
+	<style>
+		
+		/**
+		 * Simple solution for responsive tables.
+		 *
+		 * @see http://www.maxdesign.com.au/2013/03/22/simple-responsive-table/
+		 * @see http://creativeandcode.com/simple-solution-for-responsive-tables/
+		 * @see http://stackoverflow.com/a/10122689/922323
+		 */
+		
+		.scrollyo {
+			width: 100%;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+		.scrollyo img:first-of-type {
+			max-width: none;
+			display: block;
+		}
+		.scrollyo > *,
+		.scrollyo img:first-of-type {
+			margin: 0;
+			-webkit-transform: translateZ(0);
+		}
+		.scrollyo-wrap { position: relative; } /* For the scroll left/right icon added via JS. */
+		.scrollyo-overlay {
+			font-family: arial, sans-serif;
+			font-size: 11px;
+			line-height: 11px;
+			letter-spacing: .15em;
+			text-transform: uppercase;
+			text-align: center;
+			text-shadow: 0 0 1px $raven;
+			color: $milk;
+			border-radius: 3px;
+			background: rgba($raven, .75);
+			padding: 5px 8px;
+			position: absolute;
+			top: 10px;
+			left: 50%;
+			-webkit-transform: translateX(-50%);
+			   -moz-transform: translateX(-50%);
+			    -ms-transform: translateX(-50%);
+			     -o-transform: translateX(-50%);
+			        transform: translateX(-50%);
+			z-index: 100;
+			-webkit-user-select: none;
+			   -moz-user-select: none;
+			    -ms-user-select: none;
+			     -o-user-select: none;
+			        user-select: none;
+			opacity: .5;
+			cursor: default;
+		}
+		.scrollyo-overlay::before { content: "←"; }
+		.scrollyo-overlay::after { content: "→"; }
+		.scrollyo-overlay::before,
+		.scrollyo-overlay::after { font-size: 110%; }
+		
+	</style>
+	
+</head>
+<body>
+	
+	<div class="scrollyo"><img src="1.png" width="1000" alt=""></div>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	
+	<script src="../scrollyo/jquery.scrollyo.min.js"></script>
+	
+	<script>
+		
+		$(document).ready(function() {
+			
+			$('.scrollyo').scrollyo();
+			
+		});
+		
+	</script>
+	
+</body>
+</html>

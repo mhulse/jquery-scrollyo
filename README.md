@@ -1,3 +1,3 @@
 # jQuery scroll, yo!
 
-**Reminds users to scroll when there’s overflow.**
+**Remind users to scroll when there’s overflow.**
