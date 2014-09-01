@@ -8,103 +8,182 @@
  * @copyright Copyright (c) 2014 Micky Hulse.
  * @license Released under the Apache License, Version 2.0.
  * @version 0.1.0
- * @date 2014/08/31
+ * @date 2014/09/01
  */
 
-/* jshint unused:vars */
+/* jshint -W083, unused: vars */
 
 // https://raw.githubusercontent.com/mhulse/jquery-scrollyo/5cb7a704b3b4735d55acc7d32de0114cf06cb78c/source/files/jquery.scrollyo.js
-(function($) {
+(function($, window, undefined) {
 	
 	'use strict';
+	
+	var loaded;
 	
 	var defaults = {
 		foo: 'bar'
 	};
 	
+	var NS = 'scrollyo';
+	
 	var console = window.console || { log: $.noop, warn: $.noop };
-	
-	var _horiz = function() {
-		
-		return (this[0].clientWidth < this[0].scrollWidth) ? true : false;
-		
-	};
-	
-	var _scrollyo = function(settings) {
-		
-		var $this = $(this);
-		var $that = $this.parent('.scrollyo-wrap').find('.scrollyo-overlay');
-		
-		console.log('scrollyo');
-		
-		if (_horiz.call($this)) {
-			
-			console.log('horiz', settings.foo);
-			
-			$that.show();
-			
-		} else {
-			
-			$that.hide();
-			
-		}
-		
-	};
 	
 	var methods = {
 		
 		init: function(options) {
 			
-			var $this = $(this);
-			var settings = $.extend(true, {}, defaults, $.fn.scrollyo.defaults, options);
-			var $scroll = $('.scrollyo');
-			var $scroll_wrap = $('<div />', { 'class': 'scrollyo-wrap' });
-			var $scroll_overlay = $('<div />', { 'class': 'scrollyo-overlay' });
-			var timer;
-			
-			$scroll.wrap($scroll_wrap);
-			$scroll_overlay
-				.text('Scroll')
-				.hide()
-				.insertAfter($scroll);
-			
-			$(this).on('scrollyo', function() {
+			return this.each(function() {
 				
-				_scrollyo.call(this, settings);
+				var $this = $(this);
+				var data = $(this).data(NS);
+				var data_local;
+				var settings;
 				
-			});
-			
-			$(window).load(function() {
-				
-				$this.trigger('scrollyo');
-				
-			});
-			
-			$(window).resize(function() {
-				
-				clearTimeout(timer);
-				
-				timer = setTimeout(function() {
+				if ( ! data) {
 					
-					$this.trigger('scrollyo');
+					settings = $.extend(true, {}, defaults, $.fn[NS].defaults, options);
 					
-				}, 500);
+					data_local = $this.data(NS + 'Options');
+					
+					if (typeof data_local == 'object') {
+						
+						$.extend(true, settings, data_local);
+						
+					}
+					
+					$this.data(NS, {
+						init: false,
+						settings: settings,
+						target: $this
+					});
+					
+					data = $this.data(NS);
+					
+				}
+				
+				//console.log(settings);
+				
+				if ( ! data.init) {
+					
+					data.init = true;
+					
+					install.call(this, data);
+					
+					$this.on(NS + '.scroll', function() {
+						
+						console.log('scrollyo', $this, settings.foo);
+						
+						flip.call(this, data);
+						
+					});
+					
+					watch.call(this, data);
+					
+				} else {
+					
+					console.warn('jQuery.%s thinks it\'s already initialized on %o.', NS, this);
+					
+				}
 				
 			});
-			
-			return this;
 			
 		},
 		
 		destroy: function() {
 			
-			// destroy plugin here.
+			uninstall.call(this);
+			
+			$(this).off(NS + '.scroll');
 			
 		}
 		
 	};
 	
-	$.fn.scrollyo = function(method) {
+	var install = function(data) {
+		
+		var $this = $(this);
+		var $scrollyo_wrap = $('<div />', { 'class': 'scrollyo-wrap' });
+		var $scrollyo_overlay = $('<div />', { 'class': 'scrollyo-overlay' });
+		
+		$this.wrap($scrollyo_wrap);
+		$scrollyo_overlay
+			.text('Scroll')
+			.hide()
+			.insertAfter($this);
+		
+	};
+	
+	var uninstall = function() {
+		
+		var $this = $(this);
+		var $scrollyo_wrap = $this.parent('.scrollyo-wrap');
+		
+		$scrollyo_wrap
+			.children('.scrollyo-overlay')
+			.remove();
+		
+		$this.unwrap($scrollyo_wrap);
+		
+	};
+	
+	var watch = function(data) {
+		
+		var $this = $(this);
+		var $window = $(window);
+		var timer;
+		
+		if (loaded) {
+			
+			// After page load:
+			$this.trigger(NS + '.scroll');
+			
+		} else {
+			
+			// Wait for entire page to load (especially child images):
+			$window
+				.load(function() {
+					
+					loaded = true;
+					
+					$this.trigger(NS + '.scroll');
+					
+				});
+			
+		}
+		
+		$window.resize(function() {
+			
+			clearTimeout(timer);
+			
+			timer = setTimeout(function() {
+				
+				$this.trigger(NS + '.scroll');
+				
+			}, 100);
+			
+		});
+		
+	};
+	
+	var flip = function(data) {
+		
+		var $scrollyo_overlay = $(this).parent('.scrollyo-wrap').children('.scrollyo-overlay');
+		
+		if (this.clientWidth < this.scrollWidth) {
+			
+			//console.log('scroll', $(this), data.settings.foo);
+			
+			$scrollyo_overlay.show();
+			
+		} else {
+			
+			$scrollyo_overlay.hide();
+			
+		}
+		
+	};
+	
+	$.fn[NS] = function(method) {
 		
 		if (methods[method]) {
 			
@@ -116,12 +195,12 @@
 			
 		} else {
 			
-			$.error('jQuery.%s thinks that %s doesn\'t exist', 'scrollyo', method);
+			$.error('jQuery.%s thinks that %s doesn\'t exist', NS, method);
 			
 		}
 		
 	};
 	
-	$.fn.scrollyo.defaults = defaults;
+	$.fn[NS].defaults = defaults;
 	
-}(jQuery));
+}(jQuery, window));

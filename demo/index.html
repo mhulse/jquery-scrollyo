@@ -33,7 +33,10 @@
 			margin: 0;
 			-webkit-transform: translateZ(0);
 		}
-		.scrollyo-wrap { position: relative; } /* For the scroll left/right icon added via JS. */
+		.scrollyo-wrap {
+			position: relative; /* For the scroll left/right icon added via JS. */
+			border: 1px solid red;
+		}
 		.scrollyo-overlay {
 			font-family: arial, sans-serif;
 			font-size: 11px;
@@ -68,60 +71,71 @@
 		.scrollyo-overlay::before,
 		.scrollyo-overlay::after { font-size: 110%; }
 		
+		#container {
+			margin: 0 auto;
+			max-width: 990px;
+		}
+		
 	</style>
 	
 </head>
 <body>
 	
-	<div class="scrollyo"><img src="1.png" width="1000" alt=""></div>
-	
-	<div class="scrollyo">
-		<table class="table">
-			<caption>
-				Li Europan lingues es
-				<br>
-				membres del sam familie.
-			</caption>
-			<thead>
-				<tr>
-					<th scope="col">Europan</th>
-					<th scope="col">Omnicos</th>
-					<th scope="col">Occidental</th>
-					<th scope="col">Cambridge</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<td colspan="4">Lor separat existentie es un myth.</td>
-				</tr>
-			</tfoot>
-			<tbody>
-				<tr>
-					<th scope="row">Pronunciation e plu</th>
-					<td>On refusa continuar payar</td>
-					<td>Occidental in fact</td>
-					<td>On refusa continuar payar</td>
-				</tr>
-				<tr>
-					<th scope="row">Grammatica</th>
-					<td>It va esser tam simplic</td>
-					<td></td>
-					<td>Lor separat existentie</td>
-				</tr>
-				<tr>
-					<th scope="row">Simplic e regulari</th>
-					<td>Omnicos directe al desirabilite</td>
-					<td></td>
-					<td>Custosi traductores</td>
-				</tr>
-				<tr>
-					<th scope="row">Lor separat existentie</th>
-					<td></td>
-					<td></td>
-					<td>Ma quande lingues coalesce</td>
-				</tr>
-			</tbody>
-		</table>
+	<div id="container">
+		
+		<div id="ajax"></div>
+		
+		<div class="scrollyo" data-scrollyo-options='{ "foo": "override" }'><img src="1.png" width="500" alt=""></div>
+		
+		<div class="scrollyo">
+			<table class="table">
+				<caption>
+					Li Europan lingues es
+					<br>
+					membres del sam familie.
+				</caption>
+				<thead>
+					<tr>
+						<th scope="col">Europan</th>
+						<th scope="col">Omnicos</th>
+						<th scope="col">Occidental</th>
+						<th scope="col">Cambridge</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan="4">Lor separat existentie es un myth.</td>
+					</tr>
+				</tfoot>
+				<tbody>
+					<tr>
+						<th scope="row">Pronunciation e plu</th>
+						<td>On refusa continuar payar</td>
+						<td>Occidental in fact</td>
+						<td>On refusa continuar payar</td>
+					</tr>
+					<tr>
+						<th scope="row">Grammatica</th>
+						<td>It va esser tam simplic</td>
+						<td></td>
+						<td>Lor separat existentie</td>
+					</tr>
+					<tr>
+						<th scope="row">Simplic e regulari</th>
+						<td>Omnicos directe al desirabilite</td>
+						<td></td>
+						<td>Custosi traductores</td>
+					</tr>
+					<tr>
+						<th scope="row">Lor separat existentie</th>
+						<td></td>
+						<td></td>
+						<td>Ma quande lingues coalesce</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
 	</div>
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
@@ -134,8 +148,24 @@
 			
 			$.fn.scrollyo.defaults.foo = 'billy';
 			
-			$('.scrollyo').scrollyo({
+			$scrollyo = $('.scrollyo');
+			
+			$scrollyo.scrollyo({
 				//foo: 'baz'
+			});
+			
+		});
+		
+		$(window).load(function() {
+			
+			$('#ajax').load('ajax.html', function() {
+				
+				$(this)
+					.find('.scrollyo').scrollyo({
+						foo: 'ajax'
+					});
+					//.scrollyo('destroy');
+				
 			});
 			
 		});
