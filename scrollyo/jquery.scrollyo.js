@@ -11,262 +11,100 @@
  * @date 2014/08/31
  */
 
-/* jshint -W083, unused: vars */
+/* jshint unused:vars */
 
-//----------------------------------
-
-// Notes to self:
-//console.profile('profile foo');
-// ... code here ...
-//console.profileEnd('profile foo');
-// ... or:
-// console.time('timing foo');
-// ... code here ...
-// console.timeEnd('timing foo');
-
-//----------------------------------
-
-(function($, window, undefined) {
-	
-	/**
-	 * Function-level strict mode syntax.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-	 */
+// https://raw.githubusercontent.com/mhulse/jquery-scrollyo/5cb7a704b3b4735d55acc7d32de0114cf06cb78c/source/files/jquery.scrollyo.js
+(function($) {
 	
 	'use strict';
 	
-	//--------------------------------------------------------------------------
-	//
-	// Local "globals":
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Javascript console.
-	 *
-	 * @see http://www.paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/
-	 */
-	
-	var console = window.console || { log : $.noop, warn : $.noop };
-	
-	//----------------------------------
-	
-	/**
-	 * The plugin namespace.
-	 */
-	
-	var NS = 'scrollyo';
-	
-	//--------------------------------------------------------------------------
-	//
-	// Defaults/settings:
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Public defaults.
-	 *
-	 * @type { object }
-	 */
-	
 	var defaults = {
+		foo: 'bar'
+	};
+	
+	var console = window.console || { log: $.noop, warn: $.noop };
+	
+	var _horiz = function() {
 		
-	}; // defaults
+		return (this[0].clientWidth < this[0].scrollWidth) ? true : false;
+		
+	};
 	
-	//--------------------------------------------------------------------------
-	//
-	// Public methods:
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Methods object.
-	 *
-	 * @type { object }
-	 */
+	var _scrollyo = function(settings) {
+		
+		var $this = $(this);
+		var $that = $this.parent('.scrollyo-wrap').find('.scrollyo-overlay');
+		
+		console.log('scrollyo');
+		
+		if (_horiz.call($this)) {
+			
+			console.log('horiz', settings.foo);
+			
+			$that.show();
+			
+		} else {
+			
+			$that.hide();
+			
+		}
+		
+	};
 	
 	var methods = {
 		
-		/**
-		 * Init constructor.
-		 *
-		 * @type { function }
-		 * @param { object } options Options object literal.
-		 * @this { object.jquery }
-		 * @return { object.jquery } Returns target object(s) for chaining purposes.
-		 */
-		
-		init : function(options) {
+		init: function(options) {
 			
-			//----------------------------------
-			// Loop & return each this:
-			//----------------------------------
+			var $this = $(this);
+			var settings = $.extend(true, {}, defaults, $.fn.scrollyo.defaults, options);
+			var $scroll = $('.scrollyo');
+			var $scroll_wrap = $('<div />', { 'class': 'scrollyo-wrap' });
+			var $scroll_overlay = $('<div />', { 'class': 'scrollyo-overlay' });
+			var timer;
 			
-			return this.each(function() {
+			$scroll.wrap($scroll_wrap);
+			$scroll_overlay
+				.text('Scroll')
+				.hide()
+				.insertAfter($scroll);
+			
+			$(this).on('scrollyo', function() {
 				
-				//----------------------------------
-				// Declare, hoist and initialize:
-				//----------------------------------
-				
-				var $this = $(this);       // Target object.
-				var data = $this.data(NS); // Namespace instance data.
-				var settings;              // Settings object.
-				
-				//----------------------------------
-				// Data?
-				//----------------------------------
-				
-				if ( ! data) {
-					
-					//----------------------------------
-					// Initialize:
-					//----------------------------------
-					
-					settings = $.extend(true, {}, defaults, $.fn[NS].defaults, options, $this.data(NS + 'Options')); // Recursively merge defaults, options and HTML5 `data-` attribute options.
-					
-					//----------------------------------
-					// Namespaced instance data:
-					//----------------------------------
-					
-					$this.data(NS, {
-						
-						init     : false,    // Plugin initialization flag.
-						settings : settings, // Merged plugin settings.
-						target   : $this     // Target element plugin has been initialized on.
-						
-					});
-					
-					//----------------------------------
-					// Easy access:
-					//----------------------------------
-					
-					data = $this.data(NS);
-					
-				}
-				
-				//----------------------------------
-				// Data initialization check:
-				//----------------------------------
-				
-				if ( ! data.init) {
-					
-					//----------------------------------
-					// Call main:
-					//----------------------------------
-					
-					_main.call($this, data);
-					
-				} else {
-					
-					//----------------------------------
-					// Ouch!
-					//----------------------------------
-					
-					console.warn('jQuery.%s thinks it\'s already initialized on %o.', NS, this);
-					
-				}
+				_scrollyo.call(this, settings);
 				
 			});
 			
-		} // init
-		
-	}; // methods
-	
-	//--------------------------------------------------------------------------
-	//
-	// Private methods:
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Called after plugin initialization.
-	 *
-	 * @private
-	 * @type { function }
-	 * @param { object } data Parent data object literal.
-	 * @this { object.jquery }
-	 */
-	
-	var _main = function(data) {
-		
-		//----------------------------------
-		// Plugin initialization flag:
-		//----------------------------------
-		
-		data.init = true;
-		
-		var $scroll = $('.scrollyo'),
-		    $scroll_wrap = $('<div />', { 'class': 'scrollyo-wrap' }),
-		    $scroll_overlay = $('<div />', { 'class': 'scrollyo-overlay' }),
-		    resizeTimer;
-		
-		$scroll.wrap($scroll_wrap);
-		$scroll_overlay
-			.text('Scroll')
-			.hide()
-			.insertAfter($scroll);
-		
-		$scroll.on('scrollyo', function() {
-			
-			var $this = $(this),
-			    $that = $this.parent('.scrollyo-wrap').find('.scrollyo-overlay');
-			
-			if (_hasHorizontalScrollBar.call($this)) {
-				$that.show();
-				//console.log('show');
-			} else {
-				$that.hide();
-				//console.log('hide');
-			}
-			
-		});
-		
-		$(window).load(function() {
-			
-			$scroll.trigger('scrollyo');
-			
-		});
-		
-		$(window).resize(function() {
-			
-			clearTimeout(resizeTimer);
-			
-			resizeTimer = setTimeout(function() {
+			$(window).load(function() {
 				
-				$scroll.trigger('scrollyo');
+				$this.trigger('scrollyo');
 				
-			}, 100);
+			});
 			
-		});
+			$(window).resize(function() {
+				
+				clearTimeout(timer);
+				
+				timer = setTimeout(function() {
+					
+					$this.trigger('scrollyo');
+					
+				}, 500);
+				
+			});
+			
+			return this;
+			
+		},
 		
-	}; // _main
+		destroy: function() {
+			
+			// destroy plugin here.
+			
+		}
+		
+	};
 	
-	// var _hasVerticalScrollBar = function () {
-	// 	return (this[0].clientHeight < this[0].scrollHeight) ? true : false;
-	// }; // _hasVerticalScrollBar
-	
-	var _hasHorizontalScrollBar = function() {
-		return (this[0].clientWidth < this[0].scrollWidth) ? true : false;
-	}; // _hasHorizontalScrollBar
-	
-	//--------------------------------------------------------------------------
-	//
-	// Method calling logic:
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 * Boilerplate plugin logic.
-	 *
-	 * @constructor
-	 * @see http://learn.jquery.com/plugins/
-	 * @type { function }
-	 * @param { string } method String method identifier.
-	 * @return { method } Calls plugin method with supplied params.
-	 */
-	
-	$.fn[NS] = function(method) {
+	$.fn.scrollyo = function(method) {
 		
 		if (methods[method]) {
 			
@@ -278,30 +116,12 @@
 			
 		} else {
 			
-			$.error('jQuery.%s thinks that %s doesn\'t exist', NS, method);
+			$.error('jQuery.%s thinks that %s doesn\'t exist', 'scrollyo', method);
 			
 		}
 		
-	}; // $.fn[NS]
+	};
 	
-	//--------------------------------------------------------------------------
-	//
-	// Default settings:
-	//
-	//--------------------------------------------------------------------------
+	$.fn.scrollyo.defaults = defaults;
 	
-	/**
-	 * Public defaults.
-	 *
-	 * Example (before instantiation):
-	 *
-	 * $.fn.worf.defaults.classOn = 'foo';
-	 *
-	 * @see http://stackoverflow.com/questions/11306375/plugin-authoring-how-to-allow-myplugin-defaults-key-value
-	 *
-	 * @type { object }
-	 */
-	
-	$.fn[NS].defaults = defaults;
-	
-}(jQuery, window)); // Booyah!
+}(jQuery));
