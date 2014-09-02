@@ -35,7 +35,7 @@
 		}
 		.scrollyo-wrap {
 			position: relative; /* For the scroll left/right icon added via JS. */
-			border: 1px solid red;
+			border: 1px solid green;
 		}
 		.scrollyo-overlay {
 			font-family: arial, sans-serif;
@@ -63,7 +63,7 @@
 			    -ms-user-select: none;
 			     -o-user-select: none;
 			        user-select: none;
-			opacity: .5;
+			opacity: 0;
 			cursor: default;
 		}
 		.scrollyo-overlay::before { content: "←"; }
@@ -71,9 +71,26 @@
 		.scrollyo-overlay::before,
 		.scrollyo-overlay::after { font-size: 110%; }
 		
+		@keyframes fadeIn {
+			0% { opacity: 0; }
+			100% { opacity: .5; }
+		}
+		@keyframes fadeOut {
+			0% { opacity: .5; }
+			100% { opacity: 0; }
+		}
+		.scrollyo-show,
+		.scrollyo-hide {
+			animation-duration: 100ms;
+			animation-fill-mode: both;
+		}
+		.scrollyo-show { animation-name: fadeIn; }
+		.scrollyo-hide { animation-name: fadeOut; }
+		
 		#container {
 			margin: 0 auto;
 			max-width: 990px;
+			border: 1px solid blue;
 		}
 		
 	</style>

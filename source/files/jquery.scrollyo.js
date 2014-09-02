@@ -58,7 +58,7 @@
 					
 					$this.on(NS + '.scroll', function() {
 						
-						console.log('scrollyo', $this, settings.foo);
+						//console.log('scrollyo', $this, settings.foo);
 						
 						flip.call(this, data);
 						
@@ -95,7 +95,7 @@
 		$this.wrap($scrollyo_wrap);
 		$scrollyo_overlay
 			.text('Scroll')
-			.hide()
+			//.hide()
 			.insertAfter($this);
 		
 	};
@@ -155,16 +155,20 @@
 	var flip = function(data) {
 		
 		var $scrollyo_overlay = $(this).parent('.scrollyo-wrap').children('.scrollyo-overlay');
+		var check = (this.clientWidth < this.scrollWidth); // = `true` if scrollbar exists.
 		
-		if (this.clientWidth < this.scrollWidth) {
+		// If either classes exist ...
+		if ($scrollyo_overlay.is('.scrollyo-show, .scrollyo-hide')) {
 			
-			//console.log('scroll', $(this), data.settings.foo);
+			// ... then, after first time load, toggle between "show"/"hide" classes:
+			$scrollyo_overlay
+				.toggleClass('scrollyo-show', check)
+				.toggleClass('scrollyo-hide', ( ! check));
 			
-			$scrollyo_overlay.show();
+		} else if (check) {
 			
-		} else {
-			
-			$scrollyo_overlay.hide();
+			// First time load, only if scrollbar exists, add "show" class:
+			$scrollyo_overlay.addClass('scrollyo-show');
 			
 		}
 		
