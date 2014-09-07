@@ -1,3 +1,3 @@
-# jQuery scroll, yo!
+# THIS REPO IS VAPORWARE!
 
-**Remind users to scroll when there’s overflow.**
+**Use this instead:** [perfect-scrollbar](https://github.com/noraesae/perfect-scrollbar)
